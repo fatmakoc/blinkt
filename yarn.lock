@@ -1769,7 +1769,7 @@ inquirer@^0.12.0:
     strip-ansi "^3.0.0"
     through "^2.3.6"
 
-invariant@^2.2.0:
+invariant@^2.2.0, invariant@^2.2.x:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.2.tgz#9e1f56ac0acdb6bf303306f338be3b204ae60360"
   dependencies:
@@ -2990,6 +2990,12 @@ react-deep-force-update@^1.0.0:
 react-native-loading-spinner-overlay@latest:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/react-native-loading-spinner-overlay/-/react-native-loading-spinner-overlay-0.4.1.tgz#f1ebc7df6a7f8b9d06588fb51b5554565bb3cddb"
+
+react-native-shake-event@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-shake-event/-/react-native-shake-event-2.0.0.tgz#7acb01e1e66d7b3274a761856687b2ec71924259"
+  dependencies:
+    invariant "^2.2.x"
 
 react-native@0.39.2:
   version "0.39.2"

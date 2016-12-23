@@ -10,7 +10,8 @@
 		"pquery": "^0.3.4",
 		"react": "15.4.1",
 		"react-native": "0.39.2",
-		"react-native-loading-spinner-overlay": "latest"
+		"react-native-loading-spinner-overlay": "latest",
+		"react-native-shake-event": "^2.0.0"
 	},
 	"devDependencies": {
 		"babel-jest": "18.0.0",

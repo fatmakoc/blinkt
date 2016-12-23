@@ -6,6 +6,7 @@ import {
     ListView,
     TouchableHighlight
  } from 'react-native';
+ import RNShakeEvent from 'react-native-shake-event';
 
 import Hurriyet from '../middleware/hurriyet';
 import Loading from './Loading';
@@ -31,6 +32,14 @@ class Articles extends Component {
                 isArticlesLoading: false,
             });
         });
+
+        RNShakeEvent.addEventListener('shake', () => {
+            console.log('Device shake!');
+        });
+    }
+
+    componentWillUnmount() {
+        RNShakeEvent.removeEventListener('shake');
     }
 
     renderRow(rowData){
