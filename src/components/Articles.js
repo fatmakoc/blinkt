@@ -6,7 +6,7 @@ import {
     Image,
     ListView,
     RefreshControl
- } from 'react-native';
+} from 'react-native';
 
 import RNShakeEvent from 'react-native-shake-event';
 import Tts from 'react-native-tts';

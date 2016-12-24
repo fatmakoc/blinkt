@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import {
     View,
     Text
- } from 'react-native';
- import Spinner from 'react-native-loading-spinner-overlay';
+} from 'react-native';
+
+import Spinner from 'react-native-loading-spinner-overlay';
 
 class Loading extends Component {
     render(){

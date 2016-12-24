@@ -7,7 +7,7 @@ import {
     ListView,
     TouchableHighlight,
     RefreshControl
- } from 'react-native';
+} from 'react-native';
 
 import moment from 'moment';
 
