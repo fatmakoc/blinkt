@@ -5,7 +5,8 @@ import {
     Text,
     Image,
     ListView,
-    TouchableHighlight
+    TouchableHighlight,
+    RefreshControl
  } from 'react-native';
 
 import RNShakeEvent from 'react-native-shake-event';
@@ -25,6 +26,7 @@ class Articles extends Component {
         this.hurriyet = new Hurriyet();
         this.state = {
             isArticlesLoading: true,
+            refreshing: false,
             previousShakeAction: defaults.actions.shake.init,
             nowPlaying: false
         };
@@ -62,6 +64,21 @@ class Articles extends Component {
                 </View>
             </TouchableHighlight>
         )
+    }
+
+    handleRefresh(){
+        const self = this;
+        this.setState({
+            isArticlesLoading: false,
+            refreshing: true
+        })
+        this.hurriyet.getArticlesList(10).then((data) => {
+            self.setState({
+                articles: data,
+                isArticlesLoading: false,
+                refreshing: false
+            });
+        });
     }
 
     handleShake(){
@@ -111,6 +128,12 @@ class Articles extends Component {
                             renderRow={this.renderRow}
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={this.state.refreshing}
+                                    onRefresh={this.handleRefresh.bind(this)}
+                                    title={'Yükleniyor'}/>
+                            }
                         />
                     }
                 </View> :
