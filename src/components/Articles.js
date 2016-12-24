@@ -5,16 +5,17 @@ import {
     Text,
     Image,
     ListView,
-    TouchableHighlight,
     RefreshControl
  } from 'react-native';
 
 import RNShakeEvent from 'react-native-shake-event';
 import Speech from 'react-native-speech';
-import moment from 'moment';
+import CleanText from 'clean-text-js';
 
 import Hurriyet from '../middleware/hurriyet';
 import Loading from './Loading';
+import ListeningScreen from './ListeningScreen';
+import ArticleItem from './ArticleItem';
 import { defaults } from '../constants';
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -26,13 +27,14 @@ class Articles extends Component {
 
         this.hurriyet = new Hurriyet();
         this.state = {
-            isArticlesLoading: true,
+            onArticlesLoading: true,
             refreshing: false,
-            previousShakeAction: defaults.actions.shake.init,
-            nowPlaying: false
+            shakeAction: defaults.actions.shake.init,
+            onListeningScreen: false
         };
 
         this.handleShake = this.handleShake.bind(this);
+        this.handleRefresh = this.handleRefresh.bind(this);
         this.renderRow = this.renderRow.bind(this);
     }
 
@@ -41,7 +43,7 @@ class Articles extends Component {
         this.hurriyet.getArticlesList(10).then((data) => {
             self.setState({
                 articles: data,
-                isArticlesLoading: false,
+                onArticlesLoading: false,
             });
         });
 
@@ -53,81 +55,52 @@ class Articles extends Component {
     }
 
     renderRow(rowData){
-        let imageUrl = 'http://placehold.it/64x64';
-        if(rowData.Files[0] != undefined){
-            imageUrl = rowData.Files[0].FileUrl;
-        }
-
         return (
-            <TouchableHighlight style={ styles.row } onPress={() => {this.props.navigator.push({id: 'ArticleDetail', articleId: rowData.Id});}}>
-                <View>
-                    <Image style={styles.thumb} source={{uri: imageUrl}}/>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.title}>{ rowData.Title.trim() }</Text>
-                        <Text style={styles.summary}>{ rowData.Description }</Text>
-                        <Text style={styles.date}>{ moment(rowData.CreatedDate).format('H:MM') }</Text>
-                    </View>
-                </View>
-            </TouchableHighlight>
+            <ArticleItem navigator={this.props.navigator} article={rowData}/>
         )
     }
 
     handleRefresh(){
-        const self = this;
         this.setState({
-            isArticlesLoading: false,
+            onArticlesLoading: false,
             refreshing: true
         })
         this.hurriyet.getArticlesList(10).then((data) => {
-            self.setState({
+            this.setState({
                 articles: data,
-                isArticlesLoading: false,
+                onArticlesLoading: false,
                 refreshing: false
             });
         });
     }
 
     handleShake(){
-        switch (this.state.previousShakeAction) {
+        switch (this.state.shakeAction) {
             case defaults.actions.shake.init:
                 Speech.speak({
-                    text: 'Haberleri okumaya başlamam için, lütfen telefonunuzu bir kere daha sallayınız',
+                    text: 'Merhaba, ilk haberi okumam için ekranın herhangi bir yerine dokunun.',
                     voice: 'tr-TR'
-                })
-                this.setState({
-                    previousShakeAction: defaults.actions.shake.readyToListen
+                }).then(() => {
+                    this.setState({
+                       shakeAction: defaults.actions.shake.readyToListen,
+                       onListeningScreen: true
+                    });
                 });
                 break;
 
-            case defaults.actions.shake.readyToListen:
-                this.setState({
-                    nowPlaying: true,
-                    previousShakeAction: defaults.actions.shake.playing
-                });
-                Speech.speak({
-                    text: 'Şimdi okumaya başlıyorum. Sonlandırmak için, yine telefonunuzu sallamanız yeterlidir. Bir sonraki habere geçmek için, ekranın herhangi bir yerine dokunabilirsiniz.',
-                    voice: 'tr-TR'
-                })
+            default:
+                Speech.stop();
                 break;
-            case defaults.actions.shake.playing:
-                this.setState({
-                    nowPlaying: false,
-                    previousShakeAction: defaults.actions.shake.init
-                });
-                Speech.speak({
-                    text: 'Haberleri dinlediniz.',
-                    voice: 'tr-TR'
-                })
-                break;
+            
         }
     }
 
     render(){
         return (
             <View style={styles.container}>
-                {!this.state.nowPlaying ?
-                    <View hide={this.state.nowPlaying}>
-                    {this.state.isArticlesLoading ? <Loading /> : 
+                {!this.state.onListeningScreen ?
+                    <View hide={this.state.onListeningScreen}>
+                    {this.state.onArticlesLoading ? <Loading /> : 
                         <ListView
                             style={styles.listView}
                             dataSource={ds.cloneWithRows(this.state.articles)}
@@ -138,71 +111,31 @@ class Articles extends Component {
                                 <RefreshControl
                                     refreshing={this.state.refreshing}
                                     onRefresh={this.handleRefresh.bind(this)}
-                                    title={'Yükleniyor'}/>
+                                    title={'Yükleniyor...'}/>
                             }
                         />
                     }
                 </View> :
-                <View hide={!this.state.nowPlaying}>
-                    <Text>Playing!</Text>
-                </View>
+                <ListeningScreen hide={!this.state.onListeningScreen} />
                 }
             </View>
         );
     }
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#dedede',
-    paddingTop: 65
   },
   listView: {
       padding: 8,
+      paddingTop: 65,
       flex: 1,
       flexDirection: 'column',
-  },
-  row: {
-    backgroundColor: '#fff',
-    padding: 8,
-    borderColor: '#dbdbdb',
-    borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: 5,
-    borderRadius: 4,
-    flex: 1,
-    minHeight: 80,
-  },
-  thumb: {
-    width: 64,
-    height: 64,
-    borderRadius: 4
-  },
-  textContainer: {
-    marginLeft: 70,
-    marginTop: -70,
-    minHeight: 64,
-    padding: 4,
-    flex: 1,
-    flexDirection: 'column',
-  },
-  title: {
-      fontWeight: '700',
-  },
-  date: {
-      fontSize: 9,
-      marginTop: 8,
-      color: 'gray',
-      textAlign: 'right',
-  },
-  summary: {
-      fontSize: 10,
-      marginTop: 5,
-      color: 'gray',
-      textAlign: 'justify'
   }
-});
+};
 
 export default Articles;

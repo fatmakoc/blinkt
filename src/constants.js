@@ -14,8 +14,7 @@ const defaults = {
     actions: {
         shake: {
             init: 'init',
-            readyToListen: 'readyToListen',
-            playing: 'playing'
+            readyToListen: 'readyToListen'
         }
     }
 };
