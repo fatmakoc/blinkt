@@ -9,8 +9,7 @@ import {
  } from 'react-native';
 
 import RNShakeEvent from 'react-native-shake-event';
-import Speech from 'react-native-speech';
-import CleanText from 'clean-text-js';
+import Tts from 'react-native-tts';
 
 import Hurriyet from '../middleware/hurriyet';
 import Loading from './Loading';
@@ -28,25 +27,25 @@ class Articles extends Component {
         this.hurriyet = new Hurriyet();
         this.state = {
             onArticlesLoading: true,
+            onListeningScreen: false,
             refreshing: false,
             shakeAction: defaults.actions.shake.init,
-            onListeningScreen: false
         };
 
-        this.handleShake = this.handleShake.bind(this);
         this.handleRefresh = this.handleRefresh.bind(this);
+        this.handleShake = this.handleShake.bind(this);
         this.renderRow = this.renderRow.bind(this);
     }
 
-    componentWillMount(){
-        const self = this;
+    componentWillMount(){        
         this.hurriyet.getArticlesList(10).then((data) => {
-            self.setState({
+            this.setState({
                 articles: data,
                 onArticlesLoading: false,
             });
         });
 
+        Tts.setDefaultLanguage('tr-TR');
         RNShakeEvent.addEventListener('shake', this.handleShake);
     }
 
@@ -77,19 +76,19 @@ class Articles extends Component {
     handleShake(){
         switch (this.state.shakeAction) {
             case defaults.actions.shake.init:
-                Speech.speak({
-                    text: 'Merhaba, ilk haberi okumam için ekranın herhangi bir yerine dokunun.',
-                    voice: 'tr-TR'
-                }).then(() => {
-                    this.setState({
-                       shakeAction: defaults.actions.shake.readyToListen,
-                       onListeningScreen: true
-                    });
+                Tts.speak('Merhaba, ilk haberi okumam için ekranın herhangi bir yerine dokunun.')
+                this.setState({
+                    shakeAction: defaults.actions.shake.readyToListen,
+                    onListeningScreen: true
                 });
+               
                 break;
 
             default:
-                Speech.stop();
+                Tts.speak('Okuyucu sonlandırıldı.');
+                this.setState({
+                    onListeningScreen: false
+                });
                 break;
             
         }
@@ -116,7 +115,7 @@ class Articles extends Component {
                         />
                     }
                 </View> :
-                <ListeningScreen hide={!this.state.onListeningScreen} />
+                <ListeningScreen hide={!this.state.onListeningScreen} articleIds={this.state.articles.map((article) => { return article.Id; })} />
                 }
             </View>
         );
@@ -125,16 +124,16 @@ class Articles extends Component {
 
 const styles = {
   container: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#dedede',
+    flex: 1,
+    justifyContent: 'center',
   },
   listView: {
-      padding: 8,
-      paddingTop: 65,
       flex: 1,
       flexDirection: 'column',
+      padding: 8,
+      paddingTop: 65,
   }
 };
 

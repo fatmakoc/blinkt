@@ -16,7 +16,8 @@ const defaults = {
             init: 'init',
             readyToListen: 'readyToListen'
         }
-    }
+    },
+    language: 'tr-TR'
 };
 
 export { headers, defaults };
