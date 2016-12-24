@@ -64,6 +64,7 @@ class Articles extends Component {
                     <View style={styles.textContainer}>
                         <Text style={styles.date}>{ moment(rowData.CreatedDate).format('h:mm') }</Text>
                         <Text style={styles.title}>{ rowData.Title }</Text>
+                        <Text style={styles.summary}>{ rowData.Description }</Text>
                     </View>
                 </View>
             </TouchableHighlight>
@@ -194,6 +195,11 @@ const styles = StyleSheet.create({
       marginBottom: 5,
       color: 'gray',
       textAlign: 'right',
+  },
+  summary: {
+      fontSize: 10,
+      marginTop: 5,
+      color: 'gray',
   }
 });
 
