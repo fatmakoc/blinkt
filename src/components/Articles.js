@@ -7,7 +7,9 @@ import {
     ListView,
     TouchableHighlight
  } from 'react-native';
- import RNShakeEvent from 'react-native-shake-event';
+
+import RNShakeEvent from 'react-native-shake-event';
+import Speech from 'react-native-speech';
 
 import Hurriyet from '../middleware/hurriyet';
 import Loading from './Loading';
@@ -24,6 +26,7 @@ class Articles extends Component {
         this.state = {
             isArticlesLoading: true,
             previousShakeAction: defaults.actions.shake.init,
+            nowPlaying: false
         };
 
         this.handleShake = this.handleShake.bind(this);
@@ -64,7 +67,34 @@ class Articles extends Component {
     handleShake(){
         switch (this.state.previousShakeAction) {
             case defaults.actions.shake.init:
-                console.log('I will start to read news');
+                Speech.speak({
+                    text: 'Haberleri okumaya başlamam için, lütfen telefonunuzu bir kere daha sallayınız',
+                    voice: 'tr-TR'
+                })
+                this.setState({
+                    previousShakeAction: defaults.actions.shake.readyToListen
+                });
+                break;
+
+            case defaults.actions.shake.readyToListen:
+                this.setState({
+                    nowPlaying: true,
+                    previousShakeAction: defaults.actions.shake.playing
+                });
+                Speech.speak({
+                    text: 'Şimdi okumaya başlıyorum. Sonlandırmak için, yine telefonunuzu sallamanız yeterlidir. Bir sonraki habere geçmek için, ekranın herhangi bir yerine dokunabilirsiniz.',
+                    voice: 'tr-TR'
+                })
+                break;
+            case defaults.actions.shake.playing:
+                this.setState({
+                    nowPlaying: false,
+                    previousShakeAction: defaults.actions.shake.init
+                });
+                Speech.speak({
+                    text: 'Haberleri dinlediniz.',
+                    voice: 'tr-TR'
+                })
                 break;
         }
     }
@@ -72,15 +102,22 @@ class Articles extends Component {
     render(){
         return (
             <View style={styles.container}>
-            {this.state.isArticlesLoading ? <Loading /> : 
-                <ListView
-                    style={styles.listView}
-                    dataSource={ds.cloneWithRows(this.state.articles)}
-                    renderRow={this.renderRow}
-                    showsVerticalScrollIndicator={false}
-                    showsHorizontalScrollIndicator={false}
-                />
-            }
+                {!this.state.nowPlaying ?
+                    <View hide={this.state.nowPlaying}>
+                    {this.state.isArticlesLoading ? <Loading /> : 
+                        <ListView
+                            style={styles.listView}
+                            dataSource={ds.cloneWithRows(this.state.articles)}
+                            renderRow={this.renderRow}
+                            showsVerticalScrollIndicator={false}
+                            showsHorizontalScrollIndicator={false}
+                        />
+                    }
+                </View> :
+                <View hide={!this.state.nowPlaying}>
+                    <Text>Playing!</Text>
+                </View>
+                }
             </View>
         );
     }
