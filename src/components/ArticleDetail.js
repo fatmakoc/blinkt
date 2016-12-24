@@ -8,6 +8,7 @@ import {
 
 import { Container, Header, Title, Card, CardItem, Content, Footer, FooterTab, Button, Icon } from 'native-base';
 import moment from 'moment';
+import HTMLView from 'react-native-htmlview';
 
 import Hurriyet from '../middleware/hurriyet';
 import Loading from './Loading';
@@ -34,7 +35,10 @@ import Loading from './Loading';
      }
 
      render(){
-         
+         let imageUrl = 'http://placehold.it/300x200';
+         if(this.state.article != undefined && this.state.article.Files[0] != undefined){
+             imageUrl = this.state.article.Files[0].FileUrl;
+         }
          return (
              <Container> 
                 <Header>
@@ -47,14 +51,20 @@ import Loading from './Loading';
                 {this.state.isArticleLoading ? <Loading /> :
                 <Card style={{ flex: 0 }}>
                         <CardItem>
-                            <Text>{this.state.article.Title}</Text>
-                            <Text note>April 15, 2016</Text>
+                            <Text style={styles.title}>
+                                {this.state.article.Title}
+                            </Text>
+                            <Text note style={styles.date}>
+                                <Icon style={styles.dateIcon} name='ios-clock-outline' />
+                                {` ${moment(this.state.article.CreatedDate).format('DD/MM/YYYY - HH:MM')}`}
+                            </Text>
                         </CardItem>
 
                         <CardItem cardBody> 
-                            <Image style={{ resizeMode: 'cover' }} source={{uri: this.state.article.Files[0].FileUrl}} /> 
+                            <Image style={{ resizeMode: 'cover', marginBottom: 10 }} source={{uri: imageUrl}} /> 
                             <Text>
-                                {this.state.article.Text}
+                                <HTMLView
+                                    stylesheet={styles.articleContent} value={this.state.article.Text}/>
                             </Text>
                         </CardItem>
                 </Card>
@@ -67,7 +77,20 @@ import Loading from './Loading';
 
  const styles = {
      content: {
-         padding: 10
+         padding: 10,
+         backgroundColor: '#dedede'
+     },
+     title: {
+         fontWeight: "700"
+     },
+     date: {
+         fontSize: 12,
+         paddingTop: 4
+     },
+     dateIcon: {
+         fontSize: 12,
+         paddingRight: 6,
+         marginRight: 6
      }
  }
 

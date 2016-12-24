@@ -63,9 +63,9 @@ class Articles extends Component {
                 <View>
                     <Image style={styles.thumb} source={{uri: imageUrl}}/>
                     <View style={styles.textContainer}>
-                        <Text style={styles.date}>{ moment(rowData.CreatedDate).format('h:mm') }</Text>
-                        <Text style={styles.title}>{ rowData.Title }</Text>
+                        <Text style={styles.title}>{ rowData.Title.trim() }</Text>
                         <Text style={styles.summary}>{ rowData.Description }</Text>
+                        <Text style={styles.date}>{ moment(rowData.CreatedDate).format('H:MM') }</Text>
                     </View>
                 </View>
             </TouchableHighlight>
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fafafa',
+    backgroundColor: '#dedede',
     paddingTop: 65
   },
   listView: {
@@ -189,11 +189,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   title: {
-      fontWeight: "700",
+      fontWeight: '700',
   },
   date: {
       fontSize: 9,
-      marginBottom: 5,
+      marginTop: 8,
       color: 'gray',
       textAlign: 'right',
   },
@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
       fontSize: 10,
       marginTop: 5,
       color: 'gray',
+      textAlign: 'justify'
   }
 });
 
