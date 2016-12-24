@@ -11,6 +11,7 @@ import {
 
 import RNShakeEvent from 'react-native-shake-event';
 import Speech from 'react-native-speech';
+import moment from 'moment';
 
 import Hurriyet from '../middleware/hurriyet';
 import Loading from './Loading';
@@ -60,7 +61,10 @@ class Articles extends Component {
             <TouchableHighlight style={ styles.row }>
                 <View>
                     <Image style={styles.thumb} source={{uri: imageUrl}}/>
-                    <Text style={styles.text}>{ rowData.Title }</Text>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.date}>{ moment(rowData.CreatedDate).format('h:mm') }</Text>
+                        <Text style={styles.title}>{ rowData.Title }</Text>
+                    </View>
                 </View>
             </TouchableHighlight>
         )
@@ -156,6 +160,8 @@ const styles = StyleSheet.create({
   },
   listView: {
       margin: 8,
+      flex: 1,
+      flexDirection: 'column',
   },
   row: {
     backgroundColor: '#fff',
@@ -165,18 +171,29 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     borderRadius: 4,
     flex: 1,
-    flexDirection: 'row',
-    minHeight: 80
+    minHeight: 80,
   },
   thumb: {
     width: 64,
     height: 64,
     borderRadius: 4
   },
-  text: {
-      marginLeft: 70,
-      marginTop: -70,
-      padding: 4
+  textContainer: {
+    marginLeft: 70,
+    marginTop: -70,
+    minHeight: 64,
+    padding: 4,
+    flex: 1,
+    flexDirection: 'column',
+  },
+  title: {
+      fontWeight: "700",
+  },
+  date: {
+      fontSize: 9,
+      marginBottom: 5,
+      color: 'gray',
+      textAlign: 'right',
   }
 });
 
