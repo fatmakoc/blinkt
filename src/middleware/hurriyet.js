@@ -1,5 +1,5 @@
 
-import { defaults, headers } from '../../constants';
+import { defaults, headers } from '../constants';
 import pq from 'pquery';
 
 class Hurriyet {
@@ -11,7 +11,7 @@ class Hurriyet {
     getArticlesList(top){
         let endpoint = defaults.endpoints.articles;
         if (typeof top == 'number'){
-            endpoint.concat(`?$top=${top}`);
+            endpoint = endpoint.concat(`?$top=${top}`);
         }
         return this.get(endpoint);
     }

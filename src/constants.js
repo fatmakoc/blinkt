@@ -10,6 +10,13 @@ const headers = new Headers({
 const defaults = {
     endpoints: {
         articles: apiUrl + 'articles'
+    },
+    actions: {
+        shake: {
+            init: 'init',
+            moveNext: 'moveNext',
+            stop: 'stop'
+        }
     }
 };
 

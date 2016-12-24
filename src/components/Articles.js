@@ -3,6 +3,7 @@ import {
     View,
     StyleSheet,
     Text,
+    Image,
     ListView,
     TouchableHighlight
  } from 'react-native';
@@ -10,6 +11,7 @@ import {
 
 import Hurriyet from '../middleware/hurriyet';
 import Loading from './Loading';
+import { defaults } from '../constants';
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -21,7 +23,10 @@ class Articles extends Component {
         this.hurriyet = new Hurriyet();
         this.state = {
             isArticlesLoading: true,
+            previousShakeAction: defaults.actions.shake.init,
         };
+
+        this.handleShake = this.handleShake.bind(this);
     }
 
     componentWillMount(){
@@ -33,9 +38,7 @@ class Articles extends Component {
             });
         });
 
-        RNShakeEvent.addEventListener('shake', () => {
-            console.log('Device shake!');
-        });
+        RNShakeEvent.addEventListener('shake', this.handleShake);
     }
 
     componentWillUnmount() {
@@ -43,15 +46,27 @@ class Articles extends Component {
     }
 
     renderRow(rowData){
+        let imageUrl = 'http://placehold.it/50x50';
+        if(rowData.Files[0] != undefined){
+            imageUrl = rowData.Files[0].FileUrl;
+        }
+
         return (
             <TouchableHighlight style={ styles.row }>
-                <Text>{ rowData.Title }</Text>
+                <View>
+                    <Image style={styles.thumb} source={{uri: imageUrl}}/>
+                    <Text style={styles.text}>{ rowData.Title }</Text>
+                </View>
             </TouchableHighlight>
         )
     }
 
-    showMessage(){
-        
+    handleShake(){
+        switch (this.state.previousShakeAction) {
+            case defaults.actions.shake.init:
+                console.log('I will start to read news');
+                break;
+        }
     }
 
     render(){
@@ -62,6 +77,8 @@ class Articles extends Component {
                     style={styles.listView}
                     dataSource={ds.cloneWithRows(this.state.articles)}
                     renderRow={this.renderRow}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                 />
             }
             </View>
@@ -78,17 +95,28 @@ const styles = StyleSheet.create({
     paddingTop: 30
   },
   listView: {
-      margin: 10,
-      backgroundColor: '#fff',
-      borderRadius: 10,
-      borderColor: '#dbdbdb',
-      borderWidth: StyleSheet.hairlineWidth
+      margin: 8,
   },
   row: {
     backgroundColor: '#fff',
-    padding: 10,
-    borderBottomColor: '#dbdbdb',
-    borderBottomWidth: StyleSheet.hairlineWidth
+    padding: 8,
+    borderColor: '#dbdbdb',
+    borderWidth: StyleSheet.hairlineWidth,
+    marginBottom: 5,
+    borderRadius: 4,
+    flex: 1,
+    flexDirection: 'row',
+    minHeight: 80
+  },
+  thumb: {
+    width: 64,
+    height: 64,
+    borderRadius: 4
+  },
+  text: {
+      marginLeft: 70,
+      marginTop: -70,
+      padding: 4
   }
 });
 
