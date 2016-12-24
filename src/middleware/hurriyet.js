@@ -15,6 +15,14 @@ class Hurriyet {
         }
         return this.get(endpoint);
     }
+
+    getSingleArticle(id){
+        let endpoint = defaults.endpoints.articles;
+        if (id != undefined){
+            endpoint = endpoint.concat(`/${id}`);
+        }
+        return this.get(endpoint);
+    }
 }
 
 export default Hurriyet;

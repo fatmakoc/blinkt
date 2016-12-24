@@ -33,6 +33,7 @@ class Articles extends Component {
         };
 
         this.handleShake = this.handleShake.bind(this);
+        this.renderRow = this.renderRow.bind(this);
     }
 
     componentWillMount(){
@@ -52,13 +53,13 @@ class Articles extends Component {
     }
 
     renderRow(rowData){
-        let imageUrl = 'http://placehold.it/50x50';
+        let imageUrl = 'http://placehold.it/64x64';
         if(rowData.Files[0] != undefined){
             imageUrl = rowData.Files[0].FileUrl;
         }
 
         return (
-            <TouchableHighlight style={ styles.row }>
+            <TouchableHighlight style={ styles.row } onPress={() => {this.props.navigator.push({id: 'ArticleDetail', articleId: rowData.Id});}}>
                 <View>
                     <Image style={styles.thumb} source={{uri: imageUrl}}/>
                     <View style={styles.textContainer}>
@@ -157,10 +158,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fafafa',
-    paddingTop: 30
+    paddingTop: 65
   },
   listView: {
-      margin: 8,
+      padding: 8,
       flex: 1,
       flexDirection: 'column',
   },
