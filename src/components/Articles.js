@@ -8,6 +8,7 @@ import {
     RefreshControl
 } from 'react-native';
 
+import { Header, Title, Button, Icon } from 'native-base';
 import RNShakeEvent from 'react-native-shake-event';
 import Tts from 'react-native-tts';
 
@@ -101,6 +102,12 @@ class Articles extends Component {
             <View style={styles.container}>
                 {!this.state.onListeningScreen ?
                     <View hide={this.state.onListeningScreen}>
+                        <Header>
+                            <Button transparent>
+                                <Icon name='ios-information-circle' />
+                            </Button>
+                            <Title>blinkt</Title>
+                        </Header>
                     {this.state.onArticlesLoading ? <Loading /> : 
                         <ListView
                             style={styles.listView}
@@ -135,7 +142,7 @@ const styles = {
       flex: 1,
       flexDirection: 'column',
       padding: 8,
-      paddingTop: 65,
+      paddingTop: 10,
   }
 };
 
