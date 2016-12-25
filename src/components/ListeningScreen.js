@@ -18,7 +18,7 @@ class ListeningScreen extends Component {
     constructor(){
         super();
         this.state = {
-            index: 1,
+            index: 0,
         }
 
         this.handleArticleChange = this.handleArticleChange.bind(this);
@@ -45,6 +45,10 @@ class ListeningScreen extends Component {
         this.setState({
             index: this.state.index + 1
         });
+
+        if(this.state.index >= this.props.articleIds.length){
+            Tts.speak('Haberleri dinlediniz. Şimdi telefonunuzu sallayarak okuyucuyu sonlandırabilirsiniz.');
+        }
 
         this.hurriyet.getSingleArticle(this.props.articleIds[this.state.index]).then((data) => {            
             const Entities = require('html-entities').AllHtmlEntities;

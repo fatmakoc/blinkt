@@ -2,6 +2,7 @@ import React,{ Component } from 'react';
 import {
     View,
     StyleSheet,
+    ListView,
     Text,
     Image
 } from 'react-native';
@@ -9,9 +10,12 @@ import {
 import { Container, Header, Title, Card, CardItem, Content, Footer, FooterTab, Button, Icon } from 'native-base';
 import moment from 'moment';
 import HTMLView from 'react-native-htmlview';
+import striptags from 'striptags';
 
 import Hurriyet from '../middleware/hurriyet';
 import Loading from './Loading';
+
+const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 class ArticleDetail extends Component {
      
@@ -27,11 +31,42 @@ class ArticleDetail extends Component {
     componentWillMount(){
         const self = this;
         this.hurriyet.getSingleArticle(this.props.articleId).then((data) => {
-            self.setState({
+            let parts = self.parseArticle(data.Text);
+            this.setState({
                 article: data,
+                textParts: parts, 
                 isArticleLoading: false,
             });
         });
+
+        this.renderRow = this.renderRow.bind(this);
+    }
+
+    parseArticle(text){
+        const Entities = require('html-entities').AllHtmlEntities;
+        entities = new Entities();
+        let data = entities.decode(striptags(text)).replace(/<iframe.*>/g, '').split('\n');
+        return data.map((part) => {
+            return { isSelected: false, text: part}
+        });
+    }
+
+    renderRow(rowData, sectionID, rowID){
+        return (
+            <Text style={{
+                    paddingTop: 12,
+                    backgroundColor: (rowData.isSelected) ? '#d9edf7' : '#fff',
+                    padding: 5
+            }} onLongPress={()=> {
+              rowData.isSelected = !rowData.isSelected;
+              let dataClone = this.state.textParts;
+              dataClone[rowID] = rowData;
+              this.setState({
+                  textParts: dataClone
+              })
+              console.log(this.state.textParts);
+            }}>{rowData.text}</Text>
+        )
     }
 
     render(){
@@ -62,10 +97,9 @@ class ArticleDetail extends Component {
 
                     <CardItem cardBody> 
                         <Image style={{ resizeMode: 'cover', marginBottom: 10 }} source={{uri: imageUrl}} /> 
-                        <Text>
-                            <HTMLView
-                                stylesheet={styles.articleContent} value={this.state.article.Text}/>
-                        </Text>
+                        <ListView
+                            dataSource={ds.cloneWithRows(this.state.textParts)}
+                            renderRow={this.renderRow} />
                     </CardItem>
             </Card>
             }

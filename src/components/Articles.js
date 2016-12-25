@@ -76,7 +76,7 @@ class Articles extends Component {
     handleShake(){
         switch (this.state.shakeAction) {
             case defaults.actions.shake.init:
-                Tts.speak('Merhaba, ilk haberi okumam için ekranın herhangi bir yerine dokunun.')
+                Tts.speak('Merhaba, ilk haberi okumam için ekranın herhangi bir yerine dokunun. Okuyucuyu sonlandırmak için, telefonunuzu sallamanız yeterlidir.')
                 this.setState({
                     shakeAction: defaults.actions.shake.readyToListen,
                     onListeningScreen: true
@@ -85,8 +85,10 @@ class Articles extends Component {
                 break;
 
             default:
+                Tts.stop();
                 Tts.speak('Okuyucu sonlandırıldı.');
                 this.setState({
+                    shakeAction: defaults.actions.shake.init,
                     onListeningScreen: false
                 });
                 break;
