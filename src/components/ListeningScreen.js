@@ -73,7 +73,7 @@ class ListeningScreen extends Component {
         this.hurriyet.getSingleArticle(this.props.articleIds[this.state.index]).then((data) => {
             Tts.speak('Başlık: ' + data.Title);
             this.hurriyet.getTextParts(data.Id).then((parts) => {
-                text = this.getText(data.Text, parts.textParts != null ? parts.textParts.split(',').map(Number) : null);
+                text = this.getText(data.Text, (parts.textParts != null && parts.textParts != '') ? parts.textParts.split(',').map(Number) : null);
                 Tts.speak('Şimdi açıklamayı okuyorum:');
                 Tts.speak(text);
             });
