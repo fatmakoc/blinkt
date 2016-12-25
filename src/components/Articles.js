@@ -102,11 +102,8 @@ class Articles extends Component {
             <View style={styles.container}>
                 {!this.state.onListeningScreen ?
                     <View hide={this.state.onListeningScreen}>
-                        <Header>
-                            <Button transparent>
-                                <Icon name='ios-information-circle' />
-                            </Button>
-                            <Title>blinkt</Title>
+                        <Header style={styles.header}>
+                            <Title style={styles.logo}>blinkt</Title>
                         </Header>
                     {this.state.onArticlesLoading ? <Loading /> : 
                         <ListView
@@ -137,6 +134,13 @@ const styles = {
     backgroundColor: '#dedede',
     flex: 1,
     justifyContent: 'center',
+  },
+  header: {
+      backgroundColor: '#404096',
+  },
+  logo: {
+      color: '#fff',
+      fontWeight: "700"
   },
   listView: {
       flex: 1,

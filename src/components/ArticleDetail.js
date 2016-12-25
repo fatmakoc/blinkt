@@ -36,8 +36,28 @@ class ArticleDetail extends Component {
                 article: data,
                 textParts: parts,
                 selectedParts: parts,
-                isArticleLoading: false,
             });
+
+            this.hurriyet.getTextParts(this.props.articleId).then((data) => {
+                if(data.success){
+                    if(data.textParts != null & data.textParts != ''){
+                        const partsData = this.state.textParts;
+                        let parts = data.textParts.split(',').map(Number);
+                        parts.forEach(function(part){
+                            partsData[part].isSelected = true;
+                        });
+                        this.setState({
+                            textParts: partsData,
+                            isArticleLoading: false,
+                        });
+                    }
+                    else {
+                        this.setState({
+                            isArticleLoading: false,
+                        });
+                    }
+                }
+            })
         });
 
         this.renderRow = this.renderRow.bind(this);
@@ -90,11 +110,11 @@ class ArticleDetail extends Component {
         }
         return (
             <Container> 
-            <Header>
+            <Header style={styles.header}>
                 <Button transparent onPress={() => {this.props.navigator.pop()}}>
-                    <Icon name='ios-arrow-back' />
+                    <Icon name='ios-arrow-back' style={styles.icon} />
                 </Button>
-                <Title>blinkt</Title>
+                <Title style={styles.headerTitle}>blinkt</Title>
             </Header>
             <Content style={styles.content}>
             {this.state.isArticleLoading ? <Loading /> :
@@ -128,8 +148,17 @@ const styles = {
         padding: 10,
         backgroundColor: '#dedede'
     },
+    header: {
+        backgroundColor: '#404096',
+    },
+    headerTitle: {
+        color: '#fff',
+    },
     title: {
-        fontWeight: "700"
+        fontWeight: "700",
+    },
+    icon: {
+        color: '#fff'
     },
     date: {
         fontSize: 12,
