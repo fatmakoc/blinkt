@@ -39,6 +39,26 @@ class ListeningScreen extends Component {
         );
     }
 
+    getText(text, parts){
+        const Entities = require('html-entities').AllHtmlEntities;
+        entities = new Entities();
+        let clearText = entities.decode(striptags(text)).replace(/<iframe.*>/g, '');
+        
+        if(parts != undefined && parts instanceof Array){
+            let resultText = '';
+            actualParts = clearText.split('\n');
+            actualParts.forEach(function(part, i){
+                if(parts.indexOf(i) != -1){
+                    resultText = resultText.concat(part + '\n');
+                }
+            });
+            return resultText;
+        }
+        else {
+            return clearText;
+        }
+    }
+
     handleArticleChange(){
         Tts.stop();
         
@@ -50,11 +70,13 @@ class ListeningScreen extends Component {
             Tts.speak('Haberleri dinlediniz. Şimdi telefonunuzu sallayarak okuyucuyu sonlandırabilirsiniz.');
         }
 
-        this.hurriyet.getSingleArticle(this.props.articleIds[this.state.index]).then((data) => {            
-            const Entities = require('html-entities').AllHtmlEntities;
-            entities = new Entities();
-            const text = entities.decode(striptags(data.Text)).replace(/<iframe.*>/g, '');
-            Tts.speak(text);
+        this.hurriyet.getSingleArticle(this.props.articleIds[this.state.index]).then((data) => {
+            Tts.speak('Başlık: ' + data.Title);
+            this.hurriyet.getTextParts(data.Id).then((parts) => {
+                text = this.getText(data.Text, parts.textParts != null ? parts.textParts.split(',').map(Number) : null);
+                Tts.speak('Şimdi açıklamayı okuyorum:');
+                Tts.speak(text);
+            });
         });
     }
  }

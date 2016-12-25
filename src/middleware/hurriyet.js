@@ -23,6 +23,34 @@ class Hurriyet {
         }
         return this.get(endpoint);
     }
+
+    getTextParts(id){
+        let endpoint = defaults.endpoints.textParts;
+        if (id != undefined){
+            endpoint = endpoint.concat(`/${id}`);
+        }
+        return this.get(endpoint);
+    }
+
+    setTextParts(id, parts){
+        let endpoint = defaults.endpoints.textParts;
+        params = {
+            articleId: id,
+            textParts: parts
+        }
+
+        const setParams = Object.keys(params).map((key) => {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+        }).join('&');
+
+        return pq(fetch(endpoint, { 
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            }, 
+            method: 'POST',
+            body: setParams
+        }), '@json')
+    }
 }
 
 export default Hurriyet;

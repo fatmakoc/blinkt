@@ -34,7 +34,8 @@ class ArticleDetail extends Component {
             let parts = self.parseArticle(data.Text);
             this.setState({
                 article: data,
-                textParts: parts, 
+                textParts: parts,
+                selectedParts: parts,
                 isArticleLoading: false,
             });
         });
@@ -58,13 +59,26 @@ class ArticleDetail extends Component {
                     backgroundColor: (rowData.isSelected) ? '#d9edf7' : '#fff',
                     padding: 5
             }} onLongPress={()=> {
+
               rowData.isSelected = !rowData.isSelected;
               let dataClone = this.state.textParts;
               dataClone[rowID] = rowData;
+              
+              let selectedIndexes = [];
+              dataClone.forEach(function(el, i){
+                if(el.isSelected) {
+                    selectedIndexes.push(i);
+                }
+              });
+              
               this.setState({
-                  textParts: dataClone
+                  textParts: dataClone,
+                  selectedParts: selectedIndexes
               })
-              console.log(this.state.textParts);
+
+              this.hurriyet.setTextParts(this.state.article.Id, this.state.selectedParts).then((data) => {
+              }).catch((err) => console.log(err));
+
             }}>{rowData.text}</Text>
         )
     }
